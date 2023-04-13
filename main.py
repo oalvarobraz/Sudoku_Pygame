@@ -8,6 +8,7 @@ WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 GREEN = (0, 128, 0)
 DARKBROWN = (77, 54, 32)
+GRAY = (64, 64, 64)
 
 TELA_LARGURA = 1280
 TELA_ALTURA = 720
@@ -38,8 +39,9 @@ grid_x = (SCREEN_WIDTH - grid_width) // 2
 grid_y = (SCREEN_HEIGHT - grid_height) // 2
 
 
-def show_board(board, tela, cursor_pos):
-    tela.blit(img_background, (0, 0))
+def show_board(board, tela, cursor_pos, reset_background: int = 1):
+    if reset_background:
+        tela.blit(img_background, (0, 0))
 
     square_positions = [(i * SQUARE_SIZE + grid_x, j * SQUARE_SIZE + grid_y) for i in range(NUM_SQUARES) for j in range(
         NUM_SQUARES)]
@@ -67,17 +69,19 @@ def show_board(board, tela, cursor_pos):
             if board.get_status(i, j) != 0:
                 if board.vetor.__contains__((i, j)):
                     number = font.render(str(board.get_status(i, j)), True, RED)
+                elif not reset_background:
+                    number = font.render(str(board.get_status(i, j)), True, GREEN)
                 else:
                     number = font.render(str(board.get_status(i, j)), True, BLACK)
                 number_rect = number.get_rect(
                     center=(j * SQUARE_SIZE + SQUARE_SIZE // 2 + grid_x, i * SQUARE_SIZE + SQUARE_SIZE // 2 + grid_y))
                 if cursor_pos == (i, j):
-                    pygame.draw.rect(tela, GREEN, number_rect, 2)
-                    number = font.render(str(board.get_status(i, j)), True, GREEN)
+                    pygame.draw.rect(tela, GRAY, number_rect, 2)
+                    number = font.render(str(board.get_status(i, j)), True, GRAY)
                 tela.blit(number, number_rect)
 
 
-def jogo(nome_arq, tela):
+def jogo(nome_arq, tela, num_board):
     tabuleiro = BoardSudoku()
     tabuleiro.upload_arq(nome_arq)
     controller = True
@@ -92,7 +96,7 @@ def jogo(nome_arq, tela):
     cursor_pos = None
 
     while controller:
-        show_board(tabuleiro, tela, cursor_pos)
+        show_board(tabuleiro, tela, cursor_pos, 1)
         # Botão para verificar se a resposta esta correta
         font2 = pygame.font.Font(None, 24)
 
@@ -143,33 +147,14 @@ def jogo(nome_arq, tela):
                                 elif e.type == pygame.MOUSEBUTTONDOWN:
                                     rodando = False
 
-                            font = pygame.font.Font(None, 100)
-                            header_surface = font.render("Errado!", True, BLACK)
+                            board_answer2 = BoardSudoku()
+                            board_answer2.upload_answer(f"puzzle_board_answer/board{num_board + 1}_answer.txt")
+                            bord = tabuleiro.compare_boards(board_answer2)
 
-                            # Definindo a posição central do texto
-                            header_x = (1280 - header_surface.get_width()) // 2
-                            header_y = TELA_ALTURA / 2
-
-                            # Obtendo as dimensões da superfície do texto
-                            text_rect = header_surface.get_rect()
-
-                            # Criando um retângulo centrado na tela que tem as mesmas dimensões da superfície do texto
-                            rect_x = header_x - 10  # subtraindo 10 para criar um espaço entre o texto e o retângulo
-                            rect_y = header_y - 10
-                            rect_width = text_rect.width + 20  # adicionando 20 para criar espaço em todos os lados do texto
-                            rect_height = text_rect.height + 20
-                            rect = pygame.Rect(rect_x, rect_y, rect_width, rect_height)
-
-                            # Desenhando o retângulo branco em volta do texto
-                            pygame.draw.rect(screen, WHITE, rect, 1000)
-
-                            # Desenhando a superfície do texto na tela
-                            screen.blit(header_surface, (header_x, header_y))
+                            show_board(bord, screen, None, 0)
 
                             pygame.display.update()
 
-                        print("ERRADO")
-                        # Imprimir uma mensagem
                     else:
                         rodando = True
                         while rodando:
@@ -204,15 +189,19 @@ def jogo(nome_arq, tela):
 
                             pygame.display.update()
 
-                        print("ACERTOU")
-                        # Imprimir uma mensagem
                 else:
                     show_board(tabuleiro, tela, cursor_pos)
+                    fonte = pygame.font.Font(None, 60)
 
-                    # Desenhando o botão na tela
-                    pygame.draw.rect(tela, WHITE, button)
+                    title = fonte.render("Inserindo...", True, BLACK)
 
-                    tela.blit(text3, (60, 680))
+                    # Defininfo a posição
+                    title_x = (1280 - title.get_width()) // 2
+                    title_y = 20
+
+                    # Desenhando a superfície na tela
+                    screen.blit(title, (title_x, title_y))
+
                     pygame.display.update()
                     for o in range(9):
                         for p in range(9):
@@ -220,9 +209,6 @@ def jogo(nome_arq, tela):
                                 # Quadrado clicado
                                 x = p
                                 y = o
-                                # Aqui você pode abrir uma caixa de diálogo para o usuário inserir o número
-                                # e inserir na posição (x, y) com o comando abaixo:
-                                # board.insert(x, y, numero_inserido)
                                 loop = True
                                 while loop:
                                     for ac in pygame.event.get():
@@ -251,6 +237,7 @@ def jogo(nome_arq, tela):
                                                 loop = False
                                             else:
                                                 print("Valor invalido")
+                    show_board(tabuleiro, tela, cursor_pos)
 
 
 def main():
@@ -322,6 +309,12 @@ def main():
                 # interface para escolher qual tabuleiro quer jogar
                 run = True
                 while run:
+                    font2 = pygame.font.Font(None, 24)
+
+                    # Botão para voltar a home
+                    text3 = font2.render("Back", True, BLACK)
+
+                    button = pygame.Rect(40, 660, 85, 50)
 
                     font = pygame.font.Font(None, 100)
 
@@ -333,6 +326,11 @@ def main():
 
                     # Desenando o plano de fundo
                     screen.blit(img_background, (0, 0))
+
+                    # Desenhando o botão de voltar na tela
+                    pygame.draw.rect(screen, WHITE, button)
+
+                    screen.blit(text3, (60, 680))
 
                     # Desenhando a superfície na tela
                     screen.blit(header_surface, (header_x, header_y))
@@ -382,12 +380,14 @@ def main():
                                 run = False
                         elif evento.type == pygame.MOUSEBUTTONDOWN:
                             mouse_x, mouse_y = pygame.mouse.get_pos()
+                            if button.collidepoint(mouse_x, mouse_y):
+                                run = False
                             # Verificando em qual botão foi clicado
                             for i in range(NUM_COLUMNS * NUM_ROWS):
                                 if button_rects1[i].collidepoint(mouse_x, mouse_y):
                                     # O clique do mouse colidiu com o botão i
                                     print("Clicou no botão {}".format(i + 1))
-                                    jogo(f"puzzle_board/board{i + 1}.txt", screen)
+                                    jogo(f"puzzle_board/board{i + 1}.txt", screen, i)
                                     pygame.display.update()
                     pygame.display.update()
 
@@ -395,6 +395,13 @@ def main():
                 # interface para os resultados
                 run = True
                 while run:
+
+                    font2 = pygame.font.Font(None, 24)
+
+                    # Botão para voltar a home
+                    text3 = font2.render("Back", True, BLACK)
+
+                    button = pygame.Rect(40, 660, 85, 50)
 
                     font = pygame.font.Font(None, 100)
 
@@ -406,6 +413,11 @@ def main():
 
                     # Desenando o plano de fundo
                     screen.blit(img_background, (0, 0))
+
+                    # Desenhando o botão na tela
+                    pygame.draw.rect(screen, WHITE, button)
+
+                    screen.blit(text3, (60, 680))
 
                     # Desenhando a superfície na tela
                     screen.blit(header_surface, (header_x, header_y))
@@ -455,6 +467,8 @@ def main():
                                 run = False
                         elif evento.type == pygame.MOUSEBUTTONDOWN:
                             mouse_x, mouse_y = pygame.mouse.get_pos()
+                            if button.collidepoint(mouse_x, mouse_y):
+                                run = False
                             # Verificando em qual botão foi clicado
                             for i in range(NUM_COLUMNS * NUM_ROWS):
                                 if button_rects[i].collidepoint(mouse_x, mouse_y):
