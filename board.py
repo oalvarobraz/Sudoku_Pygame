@@ -91,4 +91,15 @@ class BoardSudoku:
                     self.board[i][j] = int(val)
                     self.vetor.append((i, j))
 
+    def reset(self):
+        for i in range(9):
+            for j in range(9):
+                self.erase(i, j)
 
+    def compare_boards(self, other_board):
+        new_board = BoardSudoku()
+        for i in range(9):
+            for j in range(9):
+                if self.board[i][j] != other_board.board[i][j]:
+                    new_board.insert(i, j, other_board.board[i][j])
+        return new_board
