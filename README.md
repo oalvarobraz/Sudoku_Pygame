@@ -2,7 +2,7 @@
 Implementation of Sudoku game using Pygame.
 
 <div align="center">
-<img src="" />
+<img src="https://user-images.githubusercontent.com/114008085/231874369-8f01e40b-16e5-4b71-9d8b-bb97d5c3675e.png" />
 </div>
 
 ## Tecnologias Utilizadas
