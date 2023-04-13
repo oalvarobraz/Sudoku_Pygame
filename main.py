@@ -455,7 +455,6 @@ def main():
                             for i in range(NUM_COLUMNS * NUM_ROWS):
                                 if button_rects[i].collidepoint(mouse_x, mouse_y):
                                     # O clique do mouse colidiu com o botão i
-                                    print("Clicou no botão {}".format(i + 1))
                                     running = True
                                     while running:
                                         for evet in pygame.event.get():
