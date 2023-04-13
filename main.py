@@ -232,9 +232,13 @@ def jogo(nome_arq, tela):
                                         elif ac.type == pygame.KEYDOWN:
                                             if ac.key == pygame.K_ESCAPE:
                                                 loop = False
-                                            elif ac.key in [pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4, pygame.K_5,
-                                                            pygame.K_6, pygame.K_7, pygame.K_8, pygame.K_9]:
-                                                numero_inserido = int(pygame.key.name(ac.key))
+                                            elif ac.key in [pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4,
+                                                            pygame.K_5,
+                                                            pygame.K_6, pygame.K_7, pygame.K_8, pygame.K_9,
+                                                            pygame.K_KP1, pygame.K_KP2, pygame.K_KP3, pygame.K_KP4,
+                                                            pygame.K_KP5,
+                                                            pygame.K_KP6, pygame.K_KP7, pygame.K_KP8, pygame.K_KP9]:
+                                                numero_inserido = int(ac.unicode)
                                                 if tabuleiro.insert(x, y, numero_inserido) == 1:
                                                     # Número inserido com sucesso, atualiza a tela
                                                     show_board(tabuleiro, tela, cursor_pos)
@@ -383,7 +387,7 @@ def main():
                                 if button_rects1[i].collidepoint(mouse_x, mouse_y):
                                     # O clique do mouse colidiu com o botão i
                                     print("Clicou no botão {}".format(i + 1))
-                                    jogo(f"puzzle_board/board{i+1}.txt", screen)
+                                    jogo(f"puzzle_board/board{i + 1}.txt", screen)
                                     pygame.display.update()
                     pygame.display.update()
 
@@ -483,7 +487,7 @@ def main():
 
                                         # Abrindo arquivo com as repostas
                                         board = BoardSudoku()
-                                        board.upload_answer(f'puzzle_board_answer/board{i+1}_answer.txt')
+                                        board.upload_answer(f'puzzle_board_answer/board{i + 1}_answer.txt')
                                         cursor = None
                                         show_board(board, screen, cursor)
 
