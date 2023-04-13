@@ -7,10 +7,6 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 GREEN = (0, 128, 0)
-DARKGREEN = (0, 100, 0)
-FORESTGREEN = (34, 139, 34)
-TAUPEBROWN = (149, 122, 86)
-LIGHTBROWN = (205, 162, 116)
 DARKBROWN = (77, 54, 32)
 
 TELA_LARGURA = 1280
@@ -134,9 +130,80 @@ def jogo(nome_arq, tela):
                     controller = False
                 elif button_verificar.collidepoint(mouse_pos2):
                     if not tabuleiro.check():
+                        rodando = True
+                        while rodando:
+
+                            for e in pygame.event.get():
+                                if e.type == pygame.QUIT:
+                                    pygame.quit()
+                                    exit()
+                                elif e.type == pygame.KEYDOWN:
+                                    if e.key == pygame.K_ESCAPE:
+                                        rodando = False
+                                elif e.type == pygame.MOUSEBUTTONDOWN:
+                                    rodando = False
+
+                            font = pygame.font.Font(None, 100)
+                            header_surface = font.render("Errado!", True, BLACK)
+
+                            # Definindo a posição central do texto
+                            header_x = (1280 - header_surface.get_width()) // 2
+                            header_y = TELA_ALTURA / 2
+
+                            # Obtendo as dimensões da superfície do texto
+                            text_rect = header_surface.get_rect()
+
+                            # Criando um retângulo centrado na tela que tem as mesmas dimensões da superfície do texto
+                            rect_x = header_x - 10  # subtraindo 10 para criar um espaço entre o texto e o retângulo
+                            rect_y = header_y - 10
+                            rect_width = text_rect.width + 20  # adicionando 20 para criar espaço em todos os lados do texto
+                            rect_height = text_rect.height + 20
+                            rect = pygame.Rect(rect_x, rect_y, rect_width, rect_height)
+
+                            # Desenhando o retângulo branco em volta do texto
+                            pygame.draw.rect(screen, WHITE, rect, 1000)
+
+                            # Desenhando a superfície do texto na tela
+                            screen.blit(header_surface, (header_x, header_y))
+
+                            pygame.display.update()
+
                         print("ERRADO")
                         # Imprimir uma mensagem
                     else:
+                        rodando = True
+                        while rodando:
+
+                            for e in pygame.event.get():
+                                if e.type == pygame.QUIT:
+                                    pygame.quit()
+                                    exit()
+                                elif e.type == pygame.KEYDOWN:
+                                    if e.key == pygame.K_ESCAPE:
+                                        rodando = False
+                                elif e.type == pygame.MOUSEBUTTONDOWN:
+                                    rodando = False
+
+                            font = pygame.font.Font(None, 100)
+
+                            header_surface = font.render("Parabéns!", True, BLACK)
+
+                            # Defininfo a posição
+                            header_x = (1280 - header_surface.get_width()) // 2
+                            header_y = TELA_ALTURA / 2
+
+                            # Desenhar o retângulo branco
+                            text_rect = header_surface.get_rect()
+                            pygame.draw.rect(screen, WHITE, text_rect, 10)
+
+                            # Desenhar a superfície do texto em cima do retângulo
+                            screen.blit(header_surface, (header_x, header_y))
+
+                            # Desenhando a superfície na tela
+                            screen.blit(header_surface, (header_x, header_y))
+
+                            pygame.display.update()
+
                         print("ACERTOU")
                         # Imprimir uma mensagem
                 else:
